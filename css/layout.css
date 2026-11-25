@@ -1,0 +1,59 @@
+/* ==========================================================================
+   NEXERA · 03 · LAYOUT
+   --------------------------------------------------------------------------
+   Reusable page-structure primitives. These handle WHERE things sit,
+   never how they look (colours and borders live in components.css).
+   ========================================================================== */
+@layer layout {
+
+  /* ---------- Container: centred column with fluid side gutters ---------- */
+  .container {
+    width: min(100% - 2 * var(--gutter), var(--container));
+    margin-inline: auto;
+  }
+
+  /* ---------- Section: one band of the page ----------
+     Modifiers:  --white  white band     --tint  light blue-grey band
+     Both bands are slightly see-through so the live background map glows behind them. */
+  .section { padding-block: var(--section-pad); }
+  .section--white { background: var(--c-glass-white); }
+  .section--tint  { background: var(--c-glass-tint); }
+  .section--tight { padding-block: clamp(2.5rem, 5vw, 4rem); }
+
+  /* ---------- Section head: title + intro, used above most blocks ---------- */
+  .section-head { max-width: 46rem; margin-bottom: var(--s-7); }
+  .section-head > p { margin-top: var(--s-4); font-size: var(--step-1); color: var(--c-slate); }
+  .section-head--center { margin-inline: auto; text-align: center; }
+  .section-head--center > p { margin-inline: auto; }
+
+  /* ---------- Stack: even vertical rhythm between children ---------- */
+  .stack > * + * { margin-top: var(--stack-gap, var(--s-4)); }
+  .stack--lg { --stack-gap: var(--s-6); }
+
+  /* ---------- Split: two columns that collapse to one ---------- */
+  .split {
+    display: grid;
+    gap: clamp(2rem, 6vw, 5rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+  }
+  .split--top { align-items: start; }
+  .split--wide-left { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  @media (max-width: 56rem) {
+    .split, .split--wide-left { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* ---------- Auto grid: as many equal columns as fit ----------
+     Set --min on the element to change the smallest column width.      */
+  .auto-grid {
+    display: grid;
+    gap: var(--s-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min, 17rem)), 1fr));
+  }
+
+  .auto-grid--md { --min: 18rem; }
+  .auto-grid--sm { --min: 13rem; }
+
+  /* ---------- Cluster: wrapping row of items (buttons, chips) ---------- */
+  .cluster { display: flex; flex-wrap: wrap; gap: var(--gap, var(--s-3)); align-items: center; }
+}

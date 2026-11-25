@@ -1,0 +1,190 @@
+/* ==========================================================================
+   NEXERA · PAGE · HOME (index.html)
+   --------------------------------------------------------------------------
+   INDEX
+     1. Hero (the WebGL "demand map" is now the background of every page)
+     2. Marketplace strip
+     3. Three tests (philosophy)
+     4. Services bento
+     5. Sample analytics chart
+     6. Categories and engagement models
+   ========================================================================== */
+@layer pages {
+
+  /* =======================================================================
+     1. HERO
+     Layers (back to front):  page background map (js/bg-webgl.js)  →  gradient veil  →  text
+     The veil keeps the headline readable while the map shows on the right.
+     ======================================================================= */
+  .hero {
+    position: relative; isolation: isolate; overflow: clip;
+    display: grid; align-items: center;
+    min-height: min(46rem, calc(100svh - var(--header-h)));
+    padding-block: var(--s-7) var(--s-7);
+  }
+
+  /* Veil: solid paper on the text side fading to clear on the map side. */
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(90deg, rgb(245 247 250 / 96%) 0%, rgb(245 247 250 / 84%) 40%, rgb(245 247 250 / 0%) 72%);
+  }
+
+  .hero__content { max-width: none; }
+  .hero__content > * { max-width: 46rem; }
+  .hero h1 { max-width: 17ch; }
+  .hero__lead { margin-top: var(--s-5); font-size: var(--step-1); color: var(--c-slate); max-width: 40rem; }
+  .hero__actions { margin-top: var(--s-6); }
+
+  /* Caption that explains the map and invites interaction. */
+  .hero__hint {
+    position: absolute; right: calc(var(--gutter) + 6.5rem); bottom: var(--s-5); max-width: 20rem;   /* clears the floating call buttons */
+    padding: var(--s-3) var(--s-4); pointer-events: none;
+    background: rgb(255 255 255 / 86%); backdrop-filter: blur(6px);
+    border: 1px solid var(--c-line); border-radius: var(--r-md);
+    font-size: var(--step--1); color: var(--c-slate);
+  }
+
+  /* Key numbers under the buttons. dt/dd are reversed so the number reads first. */
+  .hero__stats {
+    display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-6);
+    margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--c-line-strong);
+  }
+  .stat { display: flex; flex-direction: column-reverse; }
+  .stat dd { font: 700 var(--step-3)/1 var(--font-display); color: var(--c-ink); transition: color var(--dur-fast); }
+  .stat:hover { transform: translateY(-3px); }
+  .stat:hover dd { color: var(--c-blue); }
+  .stat dt { margin-top: var(--s-1); font-size: var(--step--1); color: var(--c-slate); }
+
+  /* One orchestrated page-load moment: the hero content rises in, in order. */
+  @keyframes rise { from { opacity: 0; transform: translateY(1.2rem); } to { opacity: 1; transform: none; } }
+  .hero__content > * { animation: rise 1000ms var(--ease) 200ms both; }       /* starts after the page change settles */
+  .hero__content > :nth-child(2) { animation-delay: 320ms; }
+  .hero__content > :nth-child(3) { animation-delay: 440ms; }
+  .hero__content > :nth-child(4) { animation-delay: 560ms; }
+
+  @media (max-width: 56rem) {
+    .hero { min-height: 0; padding-block: var(--s-7) var(--s-8); }
+    .hero::before { background: linear-gradient(180deg, rgb(245 247 250 / 96%) 0%, rgb(245 247 250 / 84%) 55%, rgb(245 247 250 / 30%) 100%); }
+    .hero__hint { display: none; }
+  }
+
+  /* =======================================================================
+     2. MARKETPLACE STRIP
+     ======================================================================= */
+  .marketplaces { background: var(--c-glass-white); border-block: 1px solid var(--c-line); padding-block: var(--s-5); }
+  .marketplaces__inner { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-7); }
+  .marketplaces__title { font: 500 var(--step--1)/1.4 var(--font-body); letter-spacing: 0; color: var(--c-slate); max-width: 20rem; }
+  .marketplaces__list { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); list-style: none; padding: 0; }
+  .marketplaces__list li { font: 700 1.15rem var(--font-display); color: var(--c-ink); cursor: default; }
+  .marketplaces__list li:hover { color: var(--c-blue); transform: translateY(-3px); }
+
+  /* =======================================================================
+     3. THREE TESTS
+     Each test has its own accent colour, set through --accent.
+     ======================================================================= */
+  .tests { display: grid; gap: var(--s-6); list-style: none; padding: 0; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+  .tests__item { padding-top: var(--s-5); border-top: 3px solid var(--accent); }
+  .tests__item:hover { transform: translateY(-4px); }
+  .tests__item h3 { transition: color var(--dur-fast); }
+  .tests__item:hover h3 { color: var(--accent); }
+  .tests__item--demand      { --accent: var(--c-blue); }
+  .tests__item--competition { --accent: var(--c-marigold-dark); }
+  .tests__item--profit      { --accent: var(--c-teal); }
+  .tests__icon { width: 2.5rem; height: 2.5rem; margin-bottom: var(--s-4); color: var(--accent); transition: transform var(--dur-med) var(--ease-spring); }
+  .tests__item:hover .tests__icon { transform: scale(1.18) rotate(-8deg); }
+  .tests__item p { margin-top: var(--s-3); }
+  .tests__method {
+    padding: var(--s-3) var(--s-4); background: var(--c-surface);
+    border: 1px solid var(--c-line); border-radius: var(--r-md);
+    font-size: var(--step--1); color: var(--c-slate);
+  }
+  .tests__method strong { color: var(--c-ink); }
+  .tests__item:hover .tests__method { border-color: var(--accent); }
+
+  .statement {
+    max-width: 34ch; margin-top: var(--s-8); padding-left: var(--s-5);
+    border-left: 4px solid var(--c-marigold);
+    font: 600 var(--step-3)/1.2 var(--font-display); letter-spacing: 0;
+    transition: border-left-width var(--dur-med) var(--ease), padding-left var(--dur-med) var(--ease);
+  }
+  .statement:hover { border-left-width: 10px; padding-left: calc(var(--s-5) - 6px); }
+
+  /* =======================================================================
+     4. SERVICES BENTO (tiles of different widths, whole tile is one link)
+     ======================================================================= */
+  .bento { display: grid; gap: var(--s-4); grid-template-columns: repeat(12, minmax(0, 1fr)); list-style: none; padding: 0; }
+
+  .tile {
+    position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: var(--s-6);
+    min-height: 15rem; padding: var(--s-5);
+    background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg);
+    transition: border-color var(--dur-fast), box-shadow var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+  }
+  .tile:hover { border-color: var(--c-blue); }       /* lift, tilt and glow come from components.css §13 */
+  .tile:focus-within { outline: 3px solid var(--c-blue); outline-offset: 3px; }
+  .tile__icon { width: 2.25rem; height: 2.25rem; color: var(--c-blue); transition: transform var(--dur-med) var(--ease-spring); }
+  .tile:hover .tile__icon { transform: scale(1.18) rotate(-8deg); }
+  .tile h3 { transition: color var(--dur-fast); }
+  .tile:hover h3 { color: var(--c-blue-dark); }
+  .tile h3 { font-size: 1.4rem; }
+  .tile p { margin-top: var(--s-2); color: var(--c-slate); }
+
+  /* Stretched link: the title link covers the whole tile. */
+  .tile__link { color: var(--c-ink); text-decoration: none; }
+  .tile__link:hover { color: var(--c-ink); }
+  .tile__link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .tile__link:focus-visible { outline: none; }
+
+  /* Widths on a 12-column grid: 5+4+3, then 3+4+5. */
+  .tile--a { grid-column: span 5; background: var(--c-blue-wash); border-color: transparent; }
+  .tile--b { grid-column: span 4; }
+  .tile--c { grid-column: span 3; }
+  .tile--d { grid-column: span 3; }
+  .tile--e { grid-column: span 4; }
+  .tile--f { grid-column: span 5; background: var(--c-marigold-wash); border-color: transparent; }
+  .tile--a .tile__icon { color: var(--c-blue-dark); }
+  .tile--f .tile__icon { color: #8A5A00; }
+
+  @media (max-width: 64rem) { .bento > .tile { grid-column: span 6; } }
+  @media (max-width: 40rem) { .bento > .tile { grid-column: 1 / -1; min-height: 0; } }
+
+  /* =======================================================================
+     5. SAMPLE ANALYTICS CHART (SVG is drawn by js/charts.js)
+     ======================================================================= */
+  .chart { display: grid; gap: var(--s-4); }
+  .chart__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .chart figcaption { font: 600 1.05rem/1.3 var(--font-display); }
+
+  /* Segmented control: a row of toggle buttons where one is active. */
+  .segmented { display: inline-flex; padding: 3px; gap: 2px; background: var(--c-tint); border-radius: var(--r-pill); }
+  .segmented button {
+    padding: 0.4rem 1rem; border: 0; border-radius: var(--r-pill);
+    background: transparent; font-weight: 600; font-size: 0.95rem; color: var(--c-slate);
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .segmented button[aria-pressed="true"] { background: var(--c-ink); color: #fff; }
+  .segmented button:not([aria-pressed="true"]):hover { color: var(--c-ink); }
+
+  /* SVG parts. The bar colour follows the selected metric via --bar. */
+  .chart__svg { width: 100%; height: auto; --bar: var(--c-blue); }
+  .chart__svg[data-metric="competition"] { --bar: var(--c-marigold); }
+  .chart__svg[data-metric="margin"]      { --bar: var(--c-teal); }
+  .chart__grid  { stroke: var(--c-line); stroke-width: 1; }
+  .chart__label { fill: var(--c-slate); font: 500 12px var(--font-body); }
+  .chart__value { fill: var(--c-ink);   font: 700 13px var(--font-body); }
+  .chart__bar {
+    fill: var(--bar);
+    transform-box: fill-box; transform-origin: bottom;
+    transition: transform 1000ms var(--ease), fill var(--dur-med), filter var(--dur-fast);
+  }
+  .chart__bar:hover { filter: brightness(1.15) saturate(1.2); }
+
+  /* =======================================================================
+     6. CATEGORIES AND ENGAGEMENT MODELS
+     ======================================================================= */
+  .categories .chip { padding: 0.45rem 1rem; border-radius: var(--r-pill); font-size: var(--step-0); }
+  .categories .chip:hover { background: var(--c-marigold-wash); border-color: var(--c-marigold-dark); box-shadow: none; }
+  .engagements { margin-top: var(--s-8); }
+  .engagement h3 { font-size: 1.3rem; }
+  .engagement p { color: var(--c-slate); }
+}

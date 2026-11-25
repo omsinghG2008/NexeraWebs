@@ -1,0 +1,16 @@
+/* ==========================================================================
+   NEXERA · PAGE · PRIVACY POLICY (privacy.html)
+   Long-form reading: narrow measure, generous spacing, sticky contents list.
+   ========================================================================== */
+@layer pages {
+  .legal-layout { display: grid; gap: var(--s-7); grid-template-columns: 17rem minmax(0, 1fr); align-items: start; }
+  @media (max-width: 56rem) { .legal-layout { grid-template-columns: minmax(0, 1fr); gap: var(--s-5); } }
+
+  .prose { max-width: 46rem; }
+  .prose section { padding-top: var(--s-7); }
+  .prose section:first-of-type { padding-top: var(--s-5); }
+  .prose h2 { font-size: var(--step-2); margin-bottom: var(--s-3); }
+  .prose ul { padding-left: 1.2em; }
+  .prose li { max-width: var(--measure); }
+  .prose li + li { margin-top: var(--s-2); }
+}

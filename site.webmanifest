@@ -1,0 +1,13 @@
+{
+  "name": "NEXERAWEBS",
+  "short_name": "NEXERAWEBS",
+  "description": "Affordable websites, e-commerce stores and WhatsApp chatbots for local businesses.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#F5F7FA",
+  "theme_color": "#F5F7FA",
+  "icons": [
+    { "src": "assets/img/favicon.png", "sizes": "64x64", "type": "image/png" },
+    { "src": "assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

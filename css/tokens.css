@@ -1,0 +1,107 @@
+/* ==========================================================================
+   NEXERA · 01 · DESIGN TOKENS
+   --------------------------------------------------------------------------
+   The single source of truth for colour, type, spacing, radius and motion.
+   To re-skin the whole site, change values in THIS file only.
+
+   Load order on every page:
+     tokens.css → base.css → layout.css → components.css → pages/<page>.css
+
+   Cascade layers (declared once, here) fix the order in which rules win, so a
+   page rule always beats a component rule, and a component rule always beats
+   a base rule, no matter how specific each selector is. No !important needed.
+   ========================================================================== */
+@layer reset, base, layout, components, pages, utilities;
+
+:root {
+  /* ---------- Colour · surfaces ---------- */
+  --c-paper:   #F5F7FA;   /* page background (cool, pale) */
+  --c-surface: #FFFFFF;   /* cards, forms, header */
+  --c-tint:    #EAEFF7;   /* alternate section background */
+
+  /* ---------- Colour · text ---------- */
+  --c-ink:     #0E1A35;   /* headings and body text (navy, not black) */
+  --c-slate:   #475673;   /* secondary text (6.8:1 on paper) */
+
+  /* ---------- Colour · lines ---------- */
+  --c-line:        #DCE2EC;   /* hairlines and card borders */
+  --c-line-strong: #B9C4D8;   /* input borders, stronger dividers */
+
+  /* ---------- Colour · brand ---------- */
+  --c-blue:        #2346D9;   /* links, focus ring, "Research" group */
+  --c-blue-dark:   #1A35A8;
+  --c-blue-wash:   #E8EDFD;
+  --c-marigold:    #FFB000;   /* primary call-to-action and demand peaks */
+  --c-marigold-dark: #E39A00;
+  --c-marigold-wash: #FFF4D6;
+
+  /* ---------- Colour · glass (translucent bands so the 3D map shows through) ---------- */
+  --c-glass:       rgb(245 247 250 / 78%);   /* page-hero band */
+  --c-glass-white: rgb(255 255 255 / 82%);   /* white sections, footer, strips */
+  --c-glass-tint:  rgb(234 239 247 / 80%);   /* tinted sections */
+  --c-blue-glass:  rgb(232 237 253 / 72%);   /* call-to-action band */
+
+  /* ---------- Colour · skill groups (company page only) ---------- */
+  --c-teal:        #0B7F70;   /* "Data, AI and modelling" group */
+  --c-teal-wash:   #E2F4F1;
+  --c-plum:        #7A3FD1;   /* "Build and deliver" group */
+  --c-plum-wash:   #F0E8FB;
+
+  /* ---------- Colour · feedback ---------- */
+  --c-good:      #17703A;
+  --c-good-wash: #E3F5EA;
+  --c-bad:       #B3261E;
+  --c-bad-wash:  #FDE8E6;
+
+  /* ---------- Typography ---------- */
+  --font-display: "Michroma", "Segoe UI", system-ui, sans-serif;   /* wide techno lettering, matches the NEXERA logo */
+  --font-body:    "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Fluid type scale (min, preferred, max). Body copy stays at --step-0. */
+  --step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);    /* small print */
+  --step-0:  clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);   /* body */
+  --step-1:  clamp(1.15rem, 1.08rem + 0.35vw, 1.35rem);  /* lead paragraph */
+  --step-2:  clamp(1.15rem, 1.05rem + 0.55vw, 1.45rem);    /* h3 */
+  --step-3:  clamp(1.4rem, 1.15rem + 1.2vw, 2.1rem);     /* h2 */
+  --step-4:  clamp(1.8rem, 1.3rem + 2.4vw, 2.9rem);      /* page title */
+  --step-5:  clamp(1.9rem, 1.1rem + 3.2vw, 3.4rem);       /* hero title */
+
+  --lh-tight: 1.06;
+  --lh-snug:  1.25;
+  --lh-body:  1.65;
+  --measure:  66ch;       /* comfortable line length for reading */
+
+  /* ---------- Spacing scale ---------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4.5rem;
+  --s-9: 7rem;
+  --section-pad: clamp(4rem, 8vw, 7.5rem);   /* vertical padding of every section */
+
+  /* ---------- Layout ---------- */
+  --container: 1200px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --header-h: 4.25rem;
+
+  /* ---------- Radius (different sizes for different jobs) ---------- */
+  --r-sm: 6px;      /* chips, small tags */
+  --r-md: 10px;     /* inputs, table wrappers */
+  --r-lg: 18px;     /* cards and tiles */
+  --r-pill: 999px;  /* buttons, filter pills */
+
+  /* ---------- Elevation (used only on floating things) ---------- */
+  --shadow-float: 0 1px 2px rgb(14 26 53 / 6%), 0 14px 32px -16px rgb(14 26 53 / 28%);
+  --shadow-lift:  0 2px 4px rgb(14 26 53 / 6%), 0 24px 40px -20px rgb(35 70 217 / 38%);   /* hovered cards */
+
+  /* ---------- Motion ---------- */
+  --ease:        cubic-bezier(0.22, 1, 0.36, 1);       /* very smooth, long gentle landing (default) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);    /* small overshoot, for icons and badges */
+  --dur-fast: 240ms;      /* colour changes, small fades */
+  --dur-med:  480ms;      /* lifts, slides, hover movement */
+  --dur-slow: 950ms;      /* scroll reveal, large entrances */
+}

@@ -1,0 +1,79 @@
+<!-- ======================================================================
+     SHARED PARTIAL · SITE FOOTER
+     Edit THIS file, then run:  python3 tools/sync-partials.py
+     Search for "EDIT:" to find details you may want to change.
+     ====================================================================== -->
+<footer class="site-footer">
+  <div class="container">
+
+    <div class="site-footer__grid">
+
+      <!-- About: brand, tagline, social links -->
+      <section class="site-footer__about" aria-labelledby="footer-about-title">
+        <a class="brand" href="index.html" aria-label="NEXERAWEBS, go to the home page">
+          <img class="brand__mark" src="assets/img/logo-mark.png" alt="" width="40" height="40" loading="lazy">
+          <span class="brand__word">NEXERA<b>WEBS</b></span>
+        </a>
+        <h2 class="sr-only" id="footer-about-title">About NEXERAWEBS</h2>
+        <p>Fast, responsive websites for gyms, schools, salons, clinics, shops and local businesses, with working forms, and WhatsApp support.</p>
+        <p>
+          <!-- EDIT: social links -->
+          <a href="https://instagram.com/not_your.umesh" rel="noopener" target="_blank">Instagram</a>
+          &nbsp;·&nbsp;
+          <a href="https://omsinghportfolio.web.app" rel="noopener" target="_blank">Portfolio</a>
+          &nbsp;·&nbsp;
+          <a href="https://nexerametrics.web.app" rel="noopener" target="_blank">NEXERA Metrics</a>
+        </p>
+      </section>
+
+      <!-- Footer navigation: pages -->
+      <nav aria-labelledby="footer-pages-title">
+        <h2 class="site-footer__title" id="footer-pages-title">Pages</h2>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="services.html">Services &amp; Features</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="MyWebPolicy.html">Policies</a></li>
+        </ul>
+      </nav>
+
+      <!-- Footer navigation: plans -->
+      <nav aria-labelledby="footer-plans-title">
+        <h2 class="site-footer__title" id="footer-plans-title">Popular plans</h2>
+        <ul>
+          <li><a href="services.html#commercial-basic">Commercial Basic</a></li>
+          <li><a href="services.html#business-basic">Business Basic</a></li>
+          <li><a href="services.html#ecommerce-basic">E-commerce Basic</a></li>
+          <li><a href="services.html#add-ons">Add-ons</a></li>
+        </ul>
+      </nav>
+
+      <!-- Contact details (schema-friendly <address>) -->
+      <section aria-labelledby="footer-contact-title">
+        <h2 class="site-footer__title" id="footer-contact-title">Contact</h2>
+        <address>
+          <p><strong>Agra</strong><br>Ram Bagh, Agra<br>Uttar Pradesh, India</p>
+          <p>
+            <a href="mailto:nexerametrics@gmail.com">nexerametrics@gmail.com</a><br>
+            <a href="tel:+919520903782">+91 95209 03782</a><br>
+            <a href="https://wa.me/919520903782" rel="noopener" target="_blank">Chat on WhatsApp</a>
+          </p>
+        </address>
+      </section>
+
+    </div>
+
+    <!-- Legal line -->
+    <div class="site-footer__legal">
+      <p><small>&copy; {{year}} NEXERAWEBS. All rights reserved.</small></p>
+      <p><small><a href="MyWebPolicy.html">Policies</a></small></p>
+    </div>
+
+  </div>
+</footer>
+
+<!-- Floating quick-contact buttons (styles: components.css §14) -->
+<div class="quick-actions">
+  <a class="quick-actions__btn quick-actions__btn--call" href="tel:+919520903782">Call</a>
+  <a class="quick-actions__btn quick-actions__btn--wa" href="https://wa.me/919520903782" rel="noopener" target="_blank">WhatsApp</a>
+</div>

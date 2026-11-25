@@ -1,0 +1,543 @@
+/* ==========================================================================
+   NEXERA · 04 · COMPONENTS
+   --------------------------------------------------------------------------
+   Reusable UI pieces used on more than one page. Naming follows BEM-lite:
+     .block        the component          .block__part   a piece inside it
+     .block--mod   a variation of it
+
+   INDEX
+     1.  Site header and navigation (with hover underline)
+     2.  Buttons
+     3.  Page hero and breadcrumb (inner pages)
+     4.  Cards and tags (+ side nav)
+     5.  Chips
+     6.  Check list and note
+     7.  Numbered steps
+     8.  Accordion (FAQ)
+     9.  Tables
+    10.  Forms
+    11.  Call-to-action band
+    12.  Site footer
+    13.  Hover and motion (lift, glow, tilt, reveal, background canvas)
+    14.  Print
+   ========================================================================== */
+@layer components {
+
+  /* =======================================================================
+     1. SITE HEADER AND NAVIGATION
+     ======================================================================= */
+
+  /* Sticky bar with a soft frosted background. */
+  .site-header {
+    position: sticky; top: 0; z-index: 100; isolation: isolate;
+    border-bottom: 1px solid var(--c-line);
+    transition: box-shadow var(--dur-med) var(--ease);
+    view-transition-name: site-header;          /* stays still during page transitions */
+  }
+  /* The frosted background lives on a pseudo-element on purpose: putting
+     backdrop-filter on the header itself would trap the fixed mobile menu
+     inside the header's box and break it. */
+  .site-header::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: rgb(245 247 250 / 72%);
+    backdrop-filter: saturate(1.5) blur(16px);
+    transition: background var(--dur-med) var(--ease);
+  }
+  /* Added by js/nav.js after the first few pixels of scrolling. */
+  .site-header.is-scrolled { box-shadow: 0 12px 30px -24px rgb(14 26 53 / 55%); }
+  .site-header.is-scrolled::before { background: rgb(255 255 255 / 86%); }
+  .site-header__bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--s-5); min-height: var(--header-h);
+  }
+
+  /* Thin reading-progress line along the bottom edge (width set by nav.js). */
+  .scroll-progress {
+    position: absolute; left: 0; bottom: -1px; width: 100%; height: 3px;
+    background: var(--c-marigold);
+    transform: scaleX(var(--progress, 0)); transform-origin: left;
+  }
+
+  /* Logo + wordmark. The mark gives a small playful turn on hover. */
+  .brand {
+    display: inline-flex; align-items: center; gap: var(--s-3);
+    color: var(--c-ink); text-decoration: none;
+    font: 700 1.35rem/1 var(--font-display); letter-spacing: 0.04em;
+  }
+  .brand:hover { color: var(--c-ink); }
+  .brand__logo {
+    display: block; height: 2.5rem; width: auto; max-width: 100%;
+    border-radius: var(--r-md);       /* the logo artwork is on black, so it sits as a dark badge */
+    transition: transform var(--dur-med) var(--ease);
+  }
+  .brand:hover .brand__logo { transform: scale(1.03); }
+  @media (max-width: 480px) { .brand__logo { height: 2.1rem; } }
+
+  /* Primary navigation (desktop). */
+  .primary-nav { display: flex; align-items: center; gap: var(--s-5); }
+  .primary-nav__list {
+    display: flex; align-items: center; gap: var(--s-1);
+    list-style: none; padding: 0;
+  }
+  .primary-nav__list a {
+    position: relative; display: block; padding: 0.5rem 0.9rem;
+    border-radius: var(--r-md); color: var(--c-ink);
+    font-weight: 500; text-decoration: none;
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .primary-nav__list a:hover { background: var(--c-tint); color: var(--c-ink); }
+  /* Marigold bar: slides in on hover, stays on the current page (also exposed via aria-current). */
+  .primary-nav__list a::after {
+    content: ""; position: absolute; left: 0.9rem; right: 0.9rem; bottom: 0.1rem;
+    height: 3px; border-radius: 2px; background: var(--c-marigold);
+    transform: scaleX(0); transform-origin: left; opacity: 0.7;
+    transition: transform var(--dur-med) var(--ease), opacity var(--dur-fast);
+  }
+  .primary-nav__list a:hover::after { transform: scaleX(1); }
+  .primary-nav__list a[aria-current="page"] { font-weight: 700; }
+  .primary-nav__list a[aria-current="page"]::after { transform: scaleX(1); opacity: 1; }
+
+  /* Menu button: only shown on small screens, and only when JavaScript runs. */
+  .nav-toggle {
+    display: none; align-items: center; gap: var(--s-2);
+    padding: 0.55rem 1.1rem; border: 2px solid var(--c-ink); border-radius: var(--r-pill);
+    background: transparent; font-weight: 600;
+  }
+
+  /* Mobile: the nav becomes a full-screen panel under the header.
+     Without JavaScript (no .js class) the links simply wrap in the header. */
+  @media (max-width: 56rem) {
+    .site-header__bar { flex-wrap: wrap; padding-block: var(--s-2); }
+    .primary-nav { flex-wrap: wrap; width: 100%; justify-content: space-between; }
+    .primary-nav__list { flex-wrap: wrap; }
+
+    .js .site-header__bar { flex-wrap: nowrap; padding-block: 0; }
+    .js .nav-toggle { display: inline-flex; }
+    .js .primary-nav {
+      position: fixed; inset: var(--header-h) 0 0 0; z-index: 90;
+      flex-direction: column; align-items: stretch; justify-content: flex-start;
+      gap: var(--s-6); padding: var(--s-6) var(--gutter);
+      background: var(--c-paper);
+      visibility: hidden; opacity: 0; transform: translateY(-0.5rem);
+      transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease), visibility var(--dur-med);
+    }
+    .js .primary-nav.is-open { visibility: visible; opacity: 1; transform: none; }
+    .js .primary-nav__list { flex-direction: column; align-items: stretch; gap: 0; }
+    .js .primary-nav__list a {
+      padding: var(--s-4) 0; border-radius: 0; border-bottom: 1px solid var(--c-line);
+      font: 600 1.6rem/1.2 var(--font-display);
+    }
+    .js .primary-nav__list a::after { left: 0; right: auto; width: 2.5rem; bottom: 0.4rem; }
+    .js .primary-nav .btn { align-self: flex-start; }
+  }
+
+  /* =======================================================================
+     2. BUTTONS
+     Variants: --primary (marigold)  --secondary (outline)   Size: --sm
+     ======================================================================= */
+  .btn {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+    padding: 0.85rem 1.6rem; border: 2px solid transparent; border-radius: var(--r-pill);
+    font: 600 1rem/1.2 var(--font-body); text-decoration: none; text-align: center;
+    translate: var(--tx, 0px) var(--ty, 0px);             /* magnetic pull, set by js/motion.js */
+    transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast),
+                box-shadow var(--dur-med) var(--ease), transform var(--dur-fast) var(--ease), translate var(--dur-fast) var(--ease);
+  }
+  /* Light sweep that glides across the button on hover. */
+  .btn::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 42%) 50%, transparent 70%);
+    transform: translateX(-120%); transition: transform 900ms var(--ease);
+  }
+  .btn:hover::before { transform: translateX(120%); }
+  .btn:active { transform: translateY(0) scale(0.97); }
+  .btn--primary { background: var(--c-marigold); color: var(--c-ink); }
+  .btn--primary:hover { background: var(--c-marigold-dark); color: var(--c-ink); transform: translateY(-2px); box-shadow: 0 14px 24px -14px rgb(227 154 0 / 80%); }
+  .btn--secondary { border-color: var(--c-ink); color: var(--c-ink); background: transparent; }
+  .btn--secondary:hover { background: var(--c-ink); color: #fff; transform: translateY(-2px); box-shadow: var(--shadow-float); }
+  .btn--sm { padding: 0.55rem 1.15rem; font-size: 0.95rem; }
+  .btn[disabled] { opacity: 0.6; cursor: progress; transform: none; box-shadow: none; }
+  .btn[disabled]::before { display: none; }
+
+  /* =======================================================================
+     3. PAGE HERO AND BREADCRUMB (inner pages)
+     ======================================================================= */
+  .page-hero {
+    position: relative; isolation: isolate;
+    padding-block: clamp(2rem, 4vw, 3.5rem) clamp(2.5rem, 5vw, 4.5rem);
+    background: var(--c-glass);
+    border-bottom: 1px solid var(--c-line);
+  }
+  /* Veil keeps the intro text clear of the contour art on its right. */
+  .page-hero::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(90deg, var(--c-paper) 0%, rgb(245 247 250 / 88%) 38%, rgb(245 247 250 / 0%) 70%);
+  }
+  .page-hero h1 { font-size: var(--step-4); max-width: 20ch; margin-top: var(--s-5); }
+  .page-hero__lead { margin-top: var(--s-4); font-size: var(--step-1); color: var(--c-slate); max-width: 52ch; }
+
+  .breadcrumb ol { display: flex; flex-wrap: wrap; gap: var(--s-2); list-style: none; padding: 0; font-size: var(--step--1); }
+  .breadcrumb li { color: var(--c-slate); }
+  .breadcrumb li + li::before { content: "/"; margin-right: var(--s-2); color: var(--c-line-strong); }
+  .breadcrumb a { color: var(--c-slate); }
+
+  /* =======================================================================
+     4b. SIDE NAV: sticky in-page menu (services, privacy policy)
+     ======================================================================= */
+  /* Sticky in-page menu. The current section gets a marigold bar (aria-current). */
+  .side-nav { position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+  .side-nav ul { list-style: none; padding: 0; border-left: 2px solid var(--c-line); }
+  .side-nav a {
+    display: block; padding: 0.35rem 0 0.35rem var(--s-4); margin-left: -2px;
+    border-left: 2px solid transparent;
+    color: var(--c-slate); font-size: 0.95rem; text-decoration: none;
+  }
+  .side-nav a:hover { color: var(--c-ink); }
+  .side-nav a[aria-current] { border-left-color: var(--c-marigold-dark); color: var(--c-ink); font-weight: 600; }
+
+  /* Small screens: the menu becomes a horizontally scrolling row of pills. */
+  @media (max-width: 56rem) {
+    .side-nav { position: static; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); overflow-x: auto; }
+    .side-nav ul { display: flex; gap: var(--s-2); border: 0; width: max-content; }
+    .side-nav a, .side-nav a[aria-current] {
+      margin: 0; padding: 0.4rem 0.9rem; border: 1px solid var(--c-line-strong); border-radius: var(--r-pill);
+      background: var(--c-surface); white-space: nowrap;
+    }
+    .side-nav a[aria-current] { background: var(--c-ink); color: #fff; border-color: var(--c-ink); }
+  }
+
+  /* =======================================================================
+     4. CARDS AND TAGS
+     ======================================================================= */
+  .card {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg);
+  }
+  .card--tint { background: var(--c-blue-wash); border-color: transparent; }
+  .card > * + * { margin-top: var(--s-3); }
+
+  /* Small status label, e.g. "Placeholder". */
+  .tag {
+    display: inline-block; padding: 0.15rem 0.65rem; border-radius: var(--r-pill);
+    background: var(--c-marigold-wash); color: #6B4A00;
+    font-size: var(--step--1); font-weight: 600;
+  }
+
+  /* =======================================================================
+     5. CHIPS (small labels in a wrapping list)
+     Colour variants are used for the skill groups on the company page.
+     ======================================================================= */
+  .chip-list { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; }
+  .chip {
+    display: inline-block; padding: 0.2rem 0.7rem; border-radius: var(--r-sm);
+    border: 1px solid var(--c-line); background: var(--c-surface);
+    font-size: var(--step--1); font-weight: 500; line-height: 1.5; color: var(--c-ink);
+  }
+  .chip--blue  { background: var(--c-blue-wash);  border-color: rgb(35 70 217 / 22%); color: var(--c-blue-dark); }
+  .chip--teal  { background: var(--c-teal-wash);  border-color: rgb(11 127 112 / 25%); color: #075A4F; }
+  .chip--plum  { background: var(--c-plum-wash);  border-color: rgb(122 63 209 / 25%); color: #5A2BA0; }
+
+  /* =======================================================================
+     6. CHECK LIST AND NOTE
+     ======================================================================= */
+  .check-list { list-style: none; padding: 0; }
+  .check-list li { position: relative; padding-left: 1.7rem; }
+  .check-list li + li { margin-top: var(--s-2); }
+  .check-list li::before {                       /* the tick, drawn with borders */
+    content: ""; position: absolute; left: 0.25rem; top: 0.45em;
+    width: 0.4rem; height: 0.8rem; border: solid var(--c-blue); border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg) scale(0.85);
+  }
+
+  /* Small explanatory line under a figure, form or demo. */
+  .note { font-size: var(--step--1); color: var(--c-slate); }
+
+  /* =======================================================================
+     7. NUMBERED STEPS (a real sequence, so numbering is meaningful)
+     ======================================================================= */
+  .steps {
+    display: grid; gap: var(--s-5); list-style: none; padding: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));     /* 3 + 3 for the six-step process */
+    counter-reset: step;
+  }
+  @media (max-width: 64rem) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 40rem) { .steps { grid-template-columns: minmax(0, 1fr); } }
+  .steps__item {
+    position: relative; padding: var(--s-5) var(--s-5) var(--s-5) var(--s-5);
+    background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg);
+    counter-increment: step;
+  }
+  .steps__item::before {                          /* big step number */
+    content: counter(step);
+    display: grid; place-items: center; width: 2.5rem; height: 2.5rem; margin-bottom: var(--s-4);
+    border-radius: 50%; background: var(--c-ink); color: #fff;
+    font: 700 1.1rem/1 var(--font-display);
+  }
+  .steps__item h3 { font-size: 1.25rem; }
+  .steps__item p { margin-top: var(--s-2); }
+  .steps__deliverable {
+    display: inline-block; margin-top: var(--s-4); padding: 0.25rem 0.75rem;
+    border-radius: var(--r-sm); background: var(--c-marigold-wash);
+    font-size: var(--step--1); color: var(--c-ink);
+  }
+
+  .steps--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 64rem) { .steps--four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 40rem) { .steps--four { grid-template-columns: minmax(0, 1fr); } }
+
+  /* =======================================================================
+     8. ACCORDION (FAQ) built on <details> so it works without JavaScript
+     ======================================================================= */
+  .accordion { max-width: 52rem; border-top: 1px solid var(--c-line-strong); }
+  .accordion__item { border-bottom: 1px solid var(--c-line-strong); }
+  .accordion__item summary {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+    padding: var(--s-5) 0; list-style: none; cursor: pointer;
+    font: 600 var(--step-1)/1.3 var(--font-display);
+  }
+  .accordion__item summary::-webkit-details-marker { display: none; }
+  .accordion__item summary::after {               /* plus that turns into a minus */
+    content: ""; flex: none; width: 1.1rem; height: 1.1rem;
+    background:
+      linear-gradient(var(--c-ink), var(--c-ink)) center / 100% 2px no-repeat,
+      linear-gradient(var(--c-ink), var(--c-ink)) center / 2px 100% no-repeat;
+    transition: transform var(--dur-med) var(--ease);
+  }
+  .accordion__item[open] summary::after { transform: rotate(90deg); background-size: 100% 2px, 0 0; }
+  .accordion__item[open] summary { color: var(--c-blue-dark); }
+  .accordion__body { padding-bottom: var(--s-5); color: var(--c-slate); }
+
+  /* =======================================================================
+     9. TABLES
+     Wrap every table in .table-wrap so wide tables scroll inside themselves.
+     ======================================================================= */
+  .table-wrap {
+    overflow-x: auto; background: var(--c-surface);
+    border: 1px solid var(--c-line); border-radius: var(--r-md);
+  }
+  .table caption { padding: var(--s-4) var(--s-4) var(--s-2); text-align: left; font: 600 1rem var(--font-display); }
+  .table th, .table td { padding: 0.7rem var(--s-4); text-align: left; border-bottom: 1px solid var(--c-line); }
+  .table thead th { background: var(--c-tint); font-size: var(--step--1); color: var(--c-slate); font-weight: 600; }
+  .table tbody tr:last-child :is(th, td) { border-bottom: 0; }
+  .table tbody th { font-weight: 600; }
+  .table--numeric :is(th, td):not(:first-child) { text-align: right; }
+  .is-positive { color: var(--c-good); font-weight: 600; }
+  .is-negative { color: var(--c-bad);  font-weight: 600; }
+
+  /* =======================================================================
+     10. FORMS
+     Structure:  .field > .field__label + .field__control + .field__error
+     ======================================================================= */
+  .form { display: grid; gap: var(--s-5); }
+  .form fieldset { border: 0; padding: 0; display: grid; gap: var(--s-4); min-width: 0; }
+  .form legend { padding: 0; margin-bottom: var(--s-3); font: 600 1.1rem var(--font-display); }
+
+  .field { display: grid; gap: var(--s-1); }
+  .field__label { font-size: 0.95rem; font-weight: 600; }
+  .field__hint { font-size: var(--step--1); color: var(--c-slate); font-weight: 400; }
+  .field__control {
+    width: 100%; padding: 0.7rem 0.9rem;
+    background: var(--c-surface); border: 1.5px solid var(--c-line-strong); border-radius: var(--r-md);
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+  }
+  .field__control:hover { border-color: var(--c-slate); }
+  .field__control:focus-visible { outline: none; border-color: var(--c-blue); box-shadow: 0 0 0 3px rgb(35 70 217 / 22%); }
+  .field__control[aria-invalid="true"] { border-color: var(--c-bad); }
+  textarea.field__control { resize: vertical; min-height: 7.5rem; }
+  .field__error { font-size: var(--step--1); color: var(--c-bad); }
+  .field__error:empty { display: none; }
+
+  .field--check { display: flex; align-items: flex-start; gap: var(--s-3); }
+  .field--check input { width: 1.15rem; height: 1.15rem; margin-top: 0.3rem; accent-color: var(--c-blue); }
+
+  /* Money / number inputs with a unit label inside the box. */
+  .field__unit { position: relative; }
+  .field__unit .field__control { padding-right: 3.4rem; }
+  .field__unit::after {
+    content: attr(data-unit); position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%);
+    color: var(--c-slate); font-size: var(--step--1); pointer-events: none;
+  }
+
+  .form-status { padding: var(--s-3) var(--s-4); border-radius: var(--r-md); }
+  .form-status:empty { display: none; }
+  .form-status.is-ok  { background: var(--c-good-wash); color: #0F4D28; }
+  .form-status.is-bad { background: var(--c-bad-wash);  color: #7E1812; }
+
+  /* Honeypot: hidden trap for spam bots. Real people never see or tab to it. */
+  .hp { position: absolute; left: -9999px; }
+
+  /* =======================================================================
+     11. CALL-TO-ACTION BAND (closing block on most pages)
+     ======================================================================= */
+  .cta-band {
+    position: relative; isolation: isolate;
+    padding-block: var(--section-pad);
+    background: var(--c-blue-glass);
+    border-top: 1px solid rgb(35 70 217 / 12%);
+  }
+  /* Soft veil behind the text so the background map never competes with it. */
+  .cta-band::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse 48% 70% at 50% 50%, var(--c-blue-wash) 35%, rgb(232 237 253 / 0%) 100%);
+  }
+  .cta-band__inner { max-width: 40rem; margin-inline: auto; text-align: center; }
+  .cta-band p { margin: var(--s-4) auto 0; font-size: var(--step-1); color: var(--c-slate); }
+  .cta-band .cluster { justify-content: center; margin-top: var(--s-6); }
+
+  /* =======================================================================
+     12. SITE FOOTER
+     ======================================================================= */
+  .site-footer { background: var(--c-glass-white); border-top: 1px solid var(--c-line); padding-top: var(--s-8); }
+  .site-footer__grid {
+    display: grid; gap: var(--s-7) var(--s-6);
+    grid-template-columns: 1.5fr repeat(3, 1fr) 1.4fr;
+  }
+  @media (max-width: 72rem) { .site-footer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .site-footer__about { grid-column: 1 / -1; } }
+  @media (max-width: 40rem) { .site-footer__grid { grid-template-columns: minmax(0, 1fr); } }
+
+  .site-footer__title { margin-bottom: var(--s-4); font: 700 1rem var(--font-display); letter-spacing: 0; }
+  .site-footer ul { list-style: none; padding: 0; }
+  .site-footer li + li { margin-top: var(--s-2); }
+  .site-footer a { color: var(--c-slate); text-decoration: none; }
+  .site-footer a:hover { color: var(--c-blue); text-decoration: underline; }
+  .site-footer .brand, .site-footer .brand:hover { color: var(--c-ink); text-decoration: none; }
+  .site-footer address { font-style: normal; color: var(--c-slate); }
+  .site-footer address p + p { margin-top: var(--s-3); }
+  .site-footer__about p { margin-top: var(--s-4); color: var(--c-slate); }
+
+  .site-footer__legal {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3) var(--s-6);
+    margin-top: var(--s-8); padding-block: var(--s-5); border-top: 1px solid var(--c-line);
+    color: var(--c-slate);
+  }
+  .site-footer__legal p { max-width: none; }
+
+  /* =======================================================================
+     13. HOVER AND MOTION
+     One shared place for every hover, lift, glow and reveal, so the whole
+     site feels alive and consistent. js/motion.js feeds the custom
+     properties used below (--mx --my --rx --ry --tx --ty) and adds the
+     .reveal / .is-visible classes. Without JavaScript every rule still
+     works except tilt, glow-follow and reveal, which simply do not appear.
+     ======================================================================= */
+
+  /* 13a. The live background map. Created by js/bg-webgl.js, sits behind everything. */
+  .site-bg {
+    position: fixed; top: 0; left: 0; z-index: -1;
+    width: 100%; height: 100lvh; pointer-events: none;
+    view-transition-name: site-bg;              /* stays still during page transitions */
+  }
+
+  /* 13b. Smooth transitions for everything that reacts to the pointer. */
+  :is(.card, .steps__item, .chip, .check-list li, .accordion__item summary, .table tbody tr,
+      .side-nav a, .site-footer li a, .field__label, .media, .tests__item, .stat,
+      .marketplaces__list li, .result, .breakdown__row, .skill, .skill-group, .member__photo, .service__block--need) {
+    transition: transform var(--dur-med) var(--ease), background-color var(--dur-fast), border-color var(--dur-fast),
+                box-shadow var(--dur-med) var(--ease), color var(--dur-fast), padding-left var(--dur-med) var(--ease);
+  }
+
+  /* 13c. Cards lift and glow. Cards that hold a form stay still, so typing is never disturbed. */
+  .card:not([data-chart], :has(form)):hover {
+    transform: translateY(-4px); border-color: rgb(35 70 217 / 32%); box-shadow: var(--shadow-lift);
+  }
+  /* A soft light follows the pointer across the surface (position set by js/motion.js). */
+  :is(.tile, .steps__item, .skill-group, .card:not(:has(form))):hover {
+    background-image: radial-gradient(20rem circle at var(--mx, 50%) var(--my, 50%), rgb(35 70 217 / 7%), transparent 65%);
+  }
+  /* Tiles and steps also tilt toward the pointer in 3D. */
+  :is(.tile, .steps__item):hover {
+    --lift: -4px;
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift));
+    box-shadow: var(--shadow-lift);
+  }
+
+  /* Steps: the number badge turns marigold and bounces. */
+  .steps__item::before { transition: background-color var(--dur-fast), color var(--dur-fast), transform var(--dur-med) var(--ease-spring); }
+  .steps__item:hover::before { background: var(--c-marigold); color: var(--c-ink); transform: scale(1.12) rotate(-8deg); }
+  .steps__item:hover { border-color: rgb(35 70 217 / 32%); }
+
+  /* Chips pop up; coloured chips deepen their own colour. */
+  .chip:hover { transform: translateY(-2px); border-color: var(--c-blue); box-shadow: 0 8px 14px -10px rgb(35 70 217 / 60%); }
+  .chip--teal:hover { border-color: var(--c-teal); box-shadow: 0 8px 14px -10px rgb(11 127 112 / 60%); }
+  .chip--plum:hover { border-color: var(--c-plum); box-shadow: 0 8px 14px -10px rgb(122 63 209 / 60%); }
+  .chip--method:hover { border-color: var(--c-slate); color: var(--c-ink); }
+
+  /* Lists, rows and links. */
+  .check-list li:hover { transform: translateX(4px); }
+  .check-list li:hover::before { border-color: var(--c-marigold-dark); }
+  .table tbody tr:hover { background-color: var(--c-blue-wash); }
+  .site-footer li a { display: inline-block; }
+  .site-footer li a:hover { transform: translateX(4px); }
+  @media (min-width: 56.01rem) { .side-nav a:hover { padding-left: var(--s-5); } }
+  .field:focus-within .field__label { color: var(--c-blue-dark); }
+
+  /* FAQ: opens and closes smoothly (browsers without ::details-content just snap), icon reacts on hover. */
+  .accordion__item::details-content {
+    block-size: 0; overflow: clip;
+    transition: block-size var(--dur-med) var(--ease), content-visibility var(--dur-med) allow-discrete;
+  }
+  .accordion__item[open]::details-content { block-size: auto; }
+  .accordion__item summary:hover { color: var(--c-blue-dark); padding-left: var(--s-2); }
+  .accordion__item summary:hover::after { transform: scale(1.25); }
+  .accordion__item[open] summary:hover::after { transform: rotate(90deg) scale(1.25); }
+
+  /* Images lift a little. */
+  .media { width: 100%; height: auto; border-radius: var(--r-lg); border: 1px solid var(--c-line); background: var(--c-surface); }
+  .media:hover { transform: translateY(-4px) scale(1.01); box-shadow: var(--shadow-lift); }
+
+  /* Small result and number tiles. */
+  .result:hover { transform: translateY(-3px); border-color: rgb(35 70 217 / 35%); box-shadow: var(--shadow-float); }
+  .service__block--need:hover { box-shadow: var(--shadow-float); }
+
+  /* 13d. Scroll reveal: js/motion.js tags elements with .reveal, then adds .is-visible as they enter. */
+  .reveal:not(.is-visible) { opacity: 0; }
+  .reveal.is-visible { animation: reveal-up var(--dur-slow) var(--ease) var(--reveal-delay, 0ms) backwards; }
+  @keyframes reveal-up { from { opacity: 0; translate: 0 1.5rem; } to { opacity: 1; translate: 0 0; } }
+
+  /* =======================================================================
+     14. PRINT (clean printouts of services, privacy policy, etc.)
+     ======================================================================= */
+  @media print {
+    .site-header, .site-footer, .cta-band, .site-bg, .hero__hint, .nav-toggle, .skip-link { display: none; }
+    body { background: #fff; font-size: 11pt; }
+    a { color: inherit; }
+    .section { padding-block: 1.5rem; }
+    .reveal:not(.is-visible) { opacity: 1; }
+  }
+}
+
+/* ==========================================================================
+   14. NEXERAWEBS ADDITIONS  (brand wordmark, plan cards, quick-contact buttons)
+   Added for the NEXERAWEBS site. Everything uses tokens from tokens.css.
+   ========================================================================== */
+@layer components {
+
+  /* ---- Brand: mark + wordmark (replaces the NEXERA lockup image) ---- */
+  .brand__mark { display: block; height: 2.4rem; width: 2.4rem; border-radius: var(--r-md); transition: transform var(--dur-med) var(--ease); }
+  .brand:hover .brand__mark { transform: scale(1.06) rotate(-4deg); }
+  .brand__word { font: 400 1.05rem/1 var(--font-display); letter-spacing: 0.08em; color: var(--c-ink); }
+  .brand__word b { font-weight: 400; color: var(--c-blue); }
+  @media (max-width: 480px) { .brand__word { font-size: 0.9rem; } .brand__mark { height: 2.1rem; width: 2.1rem; } }
+
+  /* ---- Plan cards (services page) ---- */
+  .plans { display: grid; gap: var(--s-5); grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); list-style: none; padding: 0; }
+  .plan { display: flex; flex-direction: column; gap: var(--s-3); position: relative; padding: var(--s-6); background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg); scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .plan:hover { border-color: var(--c-blue); }
+  .plan--featured { border-color: var(--c-marigold); background: var(--c-marigold-wash); }
+  .plan__badge { position: absolute; top: var(--s-4); right: var(--s-4); }
+  .plan__num { font: 400 var(--step--1) var(--font-display); letter-spacing: 0.1em; color: var(--c-blue); }
+  .plan__name { font-size: 1.35rem; }
+  .plan__price { font: 700 var(--step-3)/1 var(--font-display); color: var(--c-ink); }
+  .plan__price small { font: 500 var(--step--1) var(--font-body); color: var(--c-slate); }
+  .plan__note { font-size: var(--step--1); color: var(--c-slate); }
+  .plan .check-list { flex: 1; }
+  .plan .btn { align-self: stretch; text-align: center; }
+
+  /* ---- Floating call / WhatsApp buttons ---- */
+  .quick-actions { position: fixed; right: var(--s-4); bottom: var(--s-4); z-index: 40; display: flex; flex-direction: column; gap: var(--s-2); }
+  .quick-actions__btn { padding: var(--s-2) var(--s-4); border-radius: 999px; font: 600 var(--step--1) var(--font-body); text-decoration: none; text-align: center; color: #fff; background: var(--c-ink); box-shadow: 0 6px 18px rgb(14 26 53 / 25%); }
+  .quick-actions__btn:hover { color: #fff; transform: translateY(-2px); }
+  .quick-actions__btn--wa { background: #1c8a4b; }
+  @media print { .quick-actions { display: none; } }
+}

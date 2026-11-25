@@ -1,0 +1,14 @@
+/* ==========================================================================
+   NEXERA · PAGE · CONTACT (contact.html)
+   Form styles live in components.css; this file only styles the details list.
+   ========================================================================== */
+@layer pages {
+  .contact-details { font-style: normal; }
+  .contact-details dl { display: grid; gap: var(--s-4); }
+  .contact-details dt { font: 600 1.05rem var(--font-display); transition: color var(--dur-fast); }
+  .contact-details div:hover dt { color: var(--c-blue-dark); }
+  .contact-details dd { color: var(--c-slate); }
+
+  /* The two forms sit in cards; headings inside are a step smaller than section titles. */
+  .card > h2 { font-size: var(--step-2); margin-bottom: var(--s-5); }
+}
